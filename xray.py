@@ -8,6 +8,7 @@ from contextlib import contextmanager
 
 from config import DEBUG, SSL_CERT_FILE, SSL_KEY_FILE, XRAY_API_HOST, XRAY_API_PORT, INBOUNDS
 from logger import logger
+from outbound_profiles import apply_managed_outbounds
 
 
 class XRayConfig(dict):
@@ -26,6 +27,8 @@ class XRayConfig(dict):
         self.peer_ip = peer_ip
 
         super().__init__(config)
+        # Optional panel extension; stock configs remain unchanged.
+        apply_managed_outbounds(self)
         self._apply_api()
 
     def to_json(self, **json_kwargs):
@@ -126,6 +129,20 @@ class XRayCore:
         if m:
             return m.groups()[0]
 
+    def validate_config(self, config: XRayConfig):
+        """Reject an invalid replacement before stopping the working core."""
+        try:
+            result = subprocess.run(
+                [self.executable_path, "run", "-test", "-config", "stdin:"],
+                input=config.to_json(), text=True, capture_output=True,
+                env=self._env, timeout=15, check=False,
+            )
+        except (OSError, subprocess.TimeoutExpired) as exc:
+            raise RuntimeError("Xray configuration preflight could not complete") from exc
+        if result.returncode != 0:
+            # Xray diagnostics can include credential-bearing config fragments.
+            raise RuntimeError("Xray configuration preflight failed; current core was not changed")
+
     def __capture_process_logs(self):
         def capture_and_debug_log():
             while self.process:
@@ -180,9 +197,12 @@ class XRayCore:
 
         return False
 
-    def start(self, config: XRayConfig):
+    def start(self, config: XRayConfig, prevalidated: bool = False):
         if self.started is True:
             raise RuntimeError("Xray is started already")
+
+        if not prevalidated:
+            self.validate_config(config)
 
         if config.get('log', {}).get('logLevel') in ('none', 'error'):
             config['log']['logLevel'] = 'warning'
@@ -229,9 +249,10 @@ class XRayCore:
 
         self.restarting = True
         try:
+            self.validate_config(config)
             logger.warning("Restarting Xray core...")
             self.stop()
-            self.start(config)
+            self.start(config, prevalidated=True)
         finally:
             self.restarting = False
 

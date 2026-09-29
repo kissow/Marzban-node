@@ -1,5 +1,7 @@
 # Marzban-node
 
+> **Mr.shaw community fork:** This repository preserves the upstream Marzban-Node project and adds node health reporting plus one managed HTTP/SOCKS outbound per Node. Read [Fork features](FORK_FEATURES.md) and the [Changelog](CHANGELOG.md). Device limiting is planned for a later release.
+
 ## Quick install
 Install Marzban-node on your server using this command
 ```bash

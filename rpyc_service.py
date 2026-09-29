@@ -5,6 +5,7 @@ from threading import Thread
 import rpyc
 
 from config import XRAY_ASSETS_PATH, XRAY_EXECUTABLE_PATH
+from health import snapshot
 from logger import logger
 from xray import XRayConfig, XRayCore
 
@@ -133,6 +134,10 @@ class XrayService(rpyc.Service):
             raise ProcessLookupError("Xray has not been started")
 
         return self.core.version
+
+    @rpyc.exposed
+    def fetch_health(self):
+        return snapshot()
 
     @rpyc.exposed
     def fetch_logs(self, callback: callable) -> XrayCoreLogsHandler:

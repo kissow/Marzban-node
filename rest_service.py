@@ -11,6 +11,7 @@ from fastapi.responses import JSONResponse
 from starlette.websockets import WebSocketDisconnect
 
 from config import XRAY_ASSETS_PATH, XRAY_EXECUTABLE_PATH
+from health import snapshot
 from logger import logger
 from xray import XRayConfig, XRayCore
 
@@ -44,6 +45,7 @@ class Service(object):
 
         self.router.add_api_route("/", self.base, methods=["POST"])
         self.router.add_api_route("/ping", self.ping, methods=["POST"])
+        self.router.add_api_route("/health", self.health, methods=["POST"])
         self.router.add_api_route("/connect", self.connect, methods=["POST"])
         self.router.add_api_route("/disconnect", self.disconnect, methods=["POST"])
         self.router.add_api_route("/start", self.start, methods=["POST"])
@@ -110,6 +112,10 @@ class Service(object):
     def ping(self, session_id: UUID = Body(embed=True)):
         self.match_session_id(session_id)
         return {}
+
+    def health(self, session_id: UUID = Body(embed=True)):
+        self.match_session_id(session_id)
+        return snapshot()
 
     def start(self, session_id: UUID = Body(embed=True), config: str = Body(embed=True)):
         self.match_session_id(session_id)
