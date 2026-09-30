@@ -13,6 +13,13 @@
 
 当前尚未实现住宅代理连通性健康检查、故障摘除或自动故障回滚，也没有准确的节点级活跃用户计数。部署前必须在隔离节点验证代理协议、认证、DNS、TCP/UDP 路由和恢复直连。
 
+## Xray 核心版本与功能边界
+
+仓库正式构建基线统一为 `v26.3.27`（稳定版）。Node 的 Dockerfile 和 GitHub Actions 通过 `XRAY_CORE_VERSION` 固定该版本，并与主面板配对发布；Node 不再在构建时随 `latest` 自动漂移。`v26.9.9` 当前是预发布版本，不能直接作为生产 `latest`。
+
+Xray 核心新增协议或传输层不会自动变成 Node 的可配置功能。只有主面板能生成对应 Xray JSON、Node 能安全接收并预检/重启、订阅转换覆盖客户端格式，且完成端到端测试后，才会新增面板开关。当前 Node 扩展只处理节点健康回报和每个 Node 独立的 HTTP/SOCKS 住宅代理出站；Hysteria 2、Finalmask、XHTTP/3、ECH、WireGuard 等暂不宣称已通过本扩展开放。
+
+如果测试 `v26.9.9`，必须使用独立测试镜像标签，不覆盖 `latest`，并检查配置预检、TCP/UDP、DNS、证书、重启恢复和回滚。服务器上的 `core-update` 可能写入外部 Xray 二进制，导致容器内外出现不同版本；正式部署以仓库镜像中的固定版本为准。
 ## 本地验证
 
 运行 `python -B -m unittest discover -s tests -v`。若安装了 Xray 二进制，设置 `XRAY_TEST_BINARY` 为其绝对路径后重跑测试，会额外验证 HTTP/SOCKS 有认证和无认证的 4 种最终 Xray 配置。
