@@ -2,7 +2,7 @@
 
 本仓库由 Mr.shaw 基于 [Gozargah/Marzban-node](https://github.com/Gozargah/Marzban-node) 开发，供其他使用者按开源许可证使用。感谢原作者和贡献者；保留原有 Git 历史与 AGPL-3.0 许可证。本说明中的扩展不是上游官方功能。
 
-当前工作分支为 `feature/residential-egress`，尚未发布生产版本。它与 `kissow/Marzban` 的 `feature/node-health-dev` 分支配对。
+当前配对发布分支为 `feature/mrshaw-release`，与 `kissow/Marzban` 的同名分支配对。合并后由 `kissow/Marzban-node` 的 `master` 作为唯一日常安装、升级和镜像发布源；原作者仓库只保留为历史基线、许可证及致谢来源。
 
 ## 当前扩展
 
