@@ -4,7 +4,7 @@
 
 ## 基线与协作
 
-本仓库是 Mr.shaw 维护的 `Gozargah/Marzban-node` Fork，官方 `master` 基线：`607cb4d2c94019219ab91a8df5eeed1ff49b1ecf`。对应面板仓库为 `kissow/Marzban`，基线 `7f396db3e703d71a28060bc9ce4a532ec64cb1f4`。保留上游历史和 AGPL-3.0 许可证；`master` 保留官方基线，逐功能通过 `feature/*` PR 合入。
+本仓库是 Mr.shaw 维护的 `Gozargah/Marzban-node` Fork，历史基线为 `607cb4d2c94019219ab91a8df5eeed1ff49b1ecf`。对应面板仓库为 `kissow/Marzban`，历史基线为 `7f396db3e703d71a28060bc9ce4a532ec64cb1f4`。保留原项目历史和 AGPL-3.0 许可证；`feature/mrshaw-release` 是本次配对发布分支，合并后的 `kissow/Marzban-node/master` 是正式发布分支。
 
 ## 三项功能的节点侧调查
 
@@ -14,4 +14,4 @@
 
 ## 联调门槛
 
-面板 API 与节点协议分别验证。记录面板 SHA、节点 SHA、协议兼容范围和回滚方式；测试节点验收后再讨论生产部署。上游更新先审阅并合并到隔离分支，不强推覆盖功能分支。第三方项目如需使用指标，应独立调用 Marzban 的受保护 API，不属于本仓库开发范围。
+面板 API 与节点协议分别验证。记录面板 SHA、节点 SHA、协议兼容范围和回滚方式；测试节点验收后再讨论生产部署。原作者仓库仅作历史参考；如需参考外部代码，必须人工审阅后合入隔离分支，禁止自动“同步分支”或强推覆盖 Mr.shaw 的正式发布分支。第三方项目如需使用指标，应独立调用 Marzban 的受保护 API，不属于本仓库开发范围。
