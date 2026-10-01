@@ -2,7 +2,7 @@
 
 本仓库由 Mr.shaw 基于 [Gozargah/Marzban-node](https://github.com/Gozargah/Marzban-node) 开发，供其他使用者按开源许可证使用。感谢原作者和贡献者；保留原有 Git 历史与 AGPL-3.0 许可证。本说明中的扩展不是上游官方功能。
 
-当前配对发布分支为 `feature/mrshaw-release`，与 `kissow/Marzban` 的同名分支配对。合并后由 `kissow/Marzban-node` 的 `master` 作为唯一日常安装、升级和镜像发布源；原作者仓库只保留为历史基线、许可证及致谢来源。
+`kissow/Marzban-node` 的 `master` 是唯一日常安装、升级和镜像发布源；与主面板的配对变更在临时分支完成，合并后删除临时分支；原作者仓库只保留为历史基线、许可证及致谢来源。
 
 ## 当前扩展
 
@@ -23,3 +23,12 @@ Xray 核心新增协议或传输层不会自动变成 Node 的可配置功能。
 ## 本地验证
 
 运行 `python -B -m unittest discover -s tests -v`。若安装了 Xray 二进制，设置 `XRAY_TEST_BINARY` 为其绝对路径后重跑测试，会额外验证 HTTP/SOCKS 有认证和无认证的 4 种最终 Xray 配置。
+
+## 跨仓库登记
+
+当前可依赖的 REST/RPyC 通道、健康快照和 `marzban_node_extensions` 配置合同，
+以 [`../09-接口登记索引.md`](../09-接口登记索引.md) 为唯一索引；不要仅凭本文件
+新增接口。变更时同时更新主面板的接口说明、scripts 的命令合同、CHANGELOG、
+测试证据和 [`../08-跨仓库更新登记模板.md`](../08-跨仓库更新登记模板.md)。
+安装命令、证书、服务端口、数据目录或镜像来源发生变化时，必须增加升级、回退和
+服务器验收记录；若没有变化，也要明确写出“无变化”。

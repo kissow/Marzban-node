@@ -4,7 +4,7 @@
 
 ## 基线与协作
 
-本仓库是 Mr.shaw 维护的 `Gozargah/Marzban-node` Fork，历史基线为 `607cb4d2c94019219ab91a8df5eeed1ff49b1ecf`。对应面板仓库为 `kissow/Marzban`，历史基线为 `7f396db3e703d71a28060bc9ce4a532ec64cb1f4`。保留原项目历史和 AGPL-3.0 许可证；`feature/mrshaw-release` 是本次配对发布分支，合并后的 `kissow/Marzban-node/master` 是正式发布分支。
+本仓库是 Mr.shaw 维护的 `Gozargah/Marzban-node` Fork，历史基线为 `607cb4d2c94019219ab91a8df5eeed1ff49b1ecf`。对应面板仓库为 `kissow/Marzban`，历史基线为 `7f396db3e703d71a28060bc9ce4a532ec64cb1f4`。保留原项目历史和 AGPL-3.0 许可证；`kissow/Marzban-node/master` 是正式发布分支，临时配对分支合并后删除。
 
 ## 三项功能的节点侧调查
 
@@ -15,3 +15,16 @@
 ## 联调门槛
 
 面板 API 与节点协议分别验证。记录面板 SHA、节点 SHA、协议兼容范围和回滚方式；测试节点验收后再讨论生产部署。原作者仓库仅作历史参考；如需参考外部代码，必须人工审阅后合入隔离分支，禁止自动“同步分支”或强推覆盖 Mr.shaw 的正式发布分支。第三方项目如需使用指标，应独立调用 Marzban 的受保护 API，不属于本仓库开发范围。
+
+## 接口与发布登记
+
+节点开发涉及的 REST/RPyC 方法、健康快照、能力标识、住宅出口配置合同和失败
+行为，统一登记在 [`../../09-接口登记索引.md`](../../09-接口登记索引.md)。每次
+改动还要同步填写 [`../../08-跨仓库更新登记模板.md`](../../08-跨仓库更新登记模板.md)，
+并在主面板、Node、scripts 的 CHANGELOG 和发布清单中记录配对 commit、最低兼容
+版本、Actions/GHCR 证据、Xray 版本、备份和服务器验收。仅 Node 内部重构也要
+说明主面板 API、Node 通道、证书、端口、数据库和脚本命令是否无变化。
+
+标准顺序是：先登记影响矩阵，再改代码和合同；本地测试与 `git diff --check`；
+CI 构建并记录镜像 digest；隔离服务器执行 `install`/`adopt`/`update` 对应场景；
+最后才把“开发中”改为“已发布”。

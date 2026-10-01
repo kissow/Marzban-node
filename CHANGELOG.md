@@ -23,3 +23,14 @@
 - 设备数量限制尚未实现，待用户级方案确定后单独开发。
 
 发布时须记录与 `kissow/Marzban` 的配对版本，并完成真实 Linux 节点联调。
+
+## 文档与接口登记规则
+
+- 所有 REST/RPyC 方法、健康快照字段、`managed-outbounds-v1` 能力、
+  `marzban_node_extensions` 配置字段和 Xray 预检行为，必须同步登记到
+  [`../09-接口登记索引.md`](../09-接口登记索引.md)。
+- 同一提交必须更新本文件、[`FORK_FEATURES.md`](FORK_FEATURES.md)、
+  [`RELEASE_CHECKLIST.md`](RELEASE_CHECKLIST.md)、Node 开发计划和配对的
+  Marzban/Marzban-scripts 文档；仅 UI 或文档变更也要写明运行时接口无变化。
+- 发布记录必须包含三仓库 commit、Actions run、GHCR 镜像 digest、Xray 版本、
+  备份位置、配对最低版本和服务器验收结果。未完成的接口只能标记为开发中。
