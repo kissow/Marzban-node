@@ -1,5 +1,9 @@
 # Marzban-Node 开源扩展开发边界
 
+## 2026-10-02 发布状态
+
+镜像已发布，服务器验收待完成。`master` commit `d6f3bec204a75085939b5b4e25fa6502f5946ae5`、Actions `36975383911` 和 GHCR index `sha256:f2a9e93ca3168abb3559f3e48baa98d02e6377fb8d4a480407f447a97bbbf774` 已核对；配对主面板 commit 为 `a6efaa8eafd82c3f68d2ff29074cf9eeb1ec8ae0`。正式 Xray 固定 `v26.3.27`，不能把服务器尚未验收写成稳定发布。
+
 ## 2026-10-02 配对增补（未发布）
 
 本地加入核心在线用户查询、旧核心观察流量回退，以及脱敏策略快照接收确认。采用既有 REST/RPyC TLS 控制通道；Xray 仍固定 v26.3.27，原证书、端口、数据及部署命令保持原样。详情和限制以本仓库 [活动与策略合同](activity-and-policy.md) 为准。

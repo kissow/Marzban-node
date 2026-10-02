@@ -1,5 +1,11 @@
 # Marzban-Node 开源扩展功能
 
+## 2026-10-02 发布状态
+
+- 状态：镜像已发布，服务器验收待完成；本地 39 项测试、真实 Xray `v26.3.27` 检查和 GitHub Actions 已完成，不能写成稳定发布。
+- `master` commit `d6f3bec204a75085939b5b4e25fa6502f5946ae5`，Actions run `36975383911`；`ghcr.io/kissow/marzban-node:latest` index `sha256:f2a9e93ca3168abb3559f3e48baa98d02e6377fb8d4a480407f447a97bbbf774`，amd64 `sha256:81965a75de1bc07f5948bb42ea216d5cd80be36bca152641c41c0bf7820c0bc3`，arm64 `sha256:6d82315f1b73a0cd75b7c5ac2f5c3163d4fab10304a54fe8c250e461a4da63cd`，两个架构 OCI revision 均对应该 commit。
+- 配对主面板为 `a6efaa8eafd82c3f68d2ff29074cf9eeb1ec8ae0`；Node 服务器更新前仍需备份证书、Compose、配置和数据目录。
+
 本仓库由 Mr.shaw 基于 [Gozargah/Marzban-node](https://github.com/Gozargah/Marzban-node) 开发，供其他使用者按开源许可证使用。感谢原作者和贡献者；保留原有 Git 历史与 AGPL-3.0 许可证。本说明中的扩展不是上游官方功能。
 
 `kissow/Marzban-node` 的 `master` 是唯一日常安装、升级和镜像发布源；与主面板的配对变更在临时分支完成，合并后删除临时分支；原作者仓库只保留为历史基线、许可证及致谢来源。

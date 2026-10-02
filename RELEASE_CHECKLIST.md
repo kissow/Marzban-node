@@ -1,25 +1,27 @@
 # Marzban-Node 发布清单
 
-## MR-20261002-01 本地增补
+## MR-20261002-01 镜像发布核对（服务器验收待完成）
 
 - [x] 本地 Python 3.12 完整 39 项测试通过，设置 `XRAY_TEST_BINARY` 后无跳过项。
 - [x] 真实固定 Xray 26.3.27 验证 TLS Stats、VLESS 在线用户出现/消失、不清零计费以及 4 种 HTTP/SOCKS 配置。
 - [x] 原子策略替换、认证会话、错误输入、即时健康确认和旧核心回退均有测试。
 - [x] CI 增加固定核心实测步骤；接口合同和配对主面板文档更新。
-- [ ] Linux Actions、发布镜像、服务器验收尚未执行。
+- [x] Linux Actions 和发布镜像已完成；服务器验收尚未执行。
+
+发布证据：Node `master` commit `d6f3bec204a75085939b5b4e25fa6502f5946ae5`，Actions `36975383911` 成功，GHCR index `sha256:f2a9e93ca3168abb3559f3e48baa98d02e6377fb8d4a480407f447a97bbbf774`；amd64 `sha256:81965a75de1bc07f5948bb42ea216d5cd80be36bca152641c41c0bf7820c0bc3`，arm64 `sha256:6d82315f1b73a0cd75b7c5ac2f5c3163d4fab10304a54fe8c250e461a4da63cd`。配对主面板 commit `a6efaa8eafd82c3f68d2ff29074cf9eeb1ec8ae0`，正式 Xray `v26.3.27`。
 
 本清单适用于 `kissow/Marzban-node` 的每一次 Node 通道、健康指标、Xray 配置、住宅出口、核心版本、脚本或文档更新。涉及主面板下发协议时，必须和 `kissow/Marzban` 配对记录。
 
 ## 变更登记
 
-- [ ] 已记录 Node commit、配对主面板 commit、脚本 commit、分支和发布状态。
-- [ ] 已标记是否修改认证 REST/RPyC 通道、能力标识、配置字段、Xray 核心、证书、服务端口或 API 端口。
-- [ ] 已明确旧版 Node 的兼容行为；不新增公网监控端口，不覆盖证书和现有数据卷。
+- [x] 已记录 Node commit、配对主面板 commit、脚本 commit、分支和发布状态。
+- [x] 已标记是否修改认证 REST/RPyC 通道、能力标识、配置字段、Xray 核心、证书、服务端口或 API 端口。
+- [x] 已明确旧版 Node 的兼容行为；不新增公网监控端口，不覆盖证书和现有数据卷。
 - [ ] 没有提交 `_patch-node.tmp`、日志、证书私钥、Token、代理密码或生产配置。
 
 ## 协议和配置
 
-- [ ] 新增或修改的 Node 方法、请求、响应、错误和能力标识已同步到主面板接口文档及 CHANGELOG。
+- [x] 新增或修改的 Node 方法、请求、响应、错误和能力标识已同步到主面板接口文档及 CHANGELOG。
 - [ ] Xray 配置有 JSON 预检；失败时不会先停止当前核心，失败日志不泄露密码。
 - [ ] HTTP/SOCKS 出站的 TCP/UDP 路由、认证、DNS、恢复直连和删除出站行为有测试。
 - [ ] 如果只改 Node 文档或脚本，明确写出主面板通道和运行时无变化。
@@ -34,10 +36,10 @@
 
 ## CI、镜像和发布
 
-- [ ] GitHub Actions 成功，记录 run ID、源 commit、架构和失败重试结果。
-- [ ] `ghcr.io/kissow/marzban-node` 的 tag/index digest 和 OCI revision 与预期 Node commit 匹配。
-- [ ] 主面板需要同步发布时，两个仓库的配对 SHA、协议兼容范围和升级顺序已记录。
-- [ ] `CHANGELOG.md`、`FORK_FEATURES.md`、README、开发计划和项目验收清单状态一致。
+- [x] GitHub Actions 成功，记录 run ID、源 commit、架构和失败重试结果。
+- [x] `ghcr.io/kissow/marzban-node` 的 tag/index digest 和 OCI revision 与预期 Node commit 匹配。
+- [x] 主面板需要同步发布时，两个仓库的配对 SHA、协议兼容范围和升级顺序已记录。
+- [x] `CHANGELOG.md`、`FORK_FEATURES.md`、README、开发计划和项目验收清单状态一致。
 
 ## 服务器验收与回滚
 
