@@ -5,6 +5,8 @@ from threading import Thread
 import rpyc
 
 from config import XRAY_ASSETS_PATH, XRAY_EXECUTABLE_PATH
+from device_activity import DeviceActivityTracker
+from device_policy import DevicePolicyStore
 from health import snapshot
 from logger import logger
 from xray import XRayConfig, XRayCore
@@ -46,6 +48,21 @@ class XrayService(rpyc.Service):
     def __init__(self):
         self.core = None
         self.connection = None
+        self.device_policies = DevicePolicyStore()
+        self.activity = DeviceActivityTracker(self._read_user_totals, window_seconds=120,
+                                              online_reader=self._read_online_users)
+
+    def _read_online_users(self):
+        if self.core is None or not self.core.started:
+            raise RuntimeError("Xray is not started")
+        from xray_stats import XrayStatsClient
+        return XrayStatsClient().online_users()
+
+    def _read_user_totals(self):
+        if self.core is None or not self.core.started:
+            raise RuntimeError("Xray is not started")
+        from xray_stats import XrayStatsClient
+        return XrayStatsClient().user_totals()
 
     def on_connect(self, conn):
         if self.connection:
@@ -62,6 +79,8 @@ class XrayService(rpyc.Service):
 
         peer, _ = socket.getpeername(conn._channel.stream.sock)
         self.connection = conn
+        self.device_policies = DevicePolicyStore()
+        self.activity.reset()
         self.connection.peer = peer
         logger.warning(f'Connected to {self.connection.peer}')
 
@@ -74,6 +93,8 @@ class XrayService(rpyc.Service):
 
             self.core = None
             self.connection = None
+            self.device_policies = DevicePolicyStore()
+            self.activity.reset()
 
     @rpyc.exposed
     def start(self, config: str):
@@ -110,6 +131,7 @@ class XrayService(rpyc.Service):
                     "Peer doesn't have on_stop function on it's service, skipped")
 
             self.core.start(config)
+            self.activity.reset()
         except Exception as exc:
             logger.error(exc)
             raise exc
@@ -122,11 +144,13 @@ class XrayService(rpyc.Service):
             except RuntimeError:
                 pass
         self.core = None
+        self.activity.reset()
 
     @rpyc.exposed
     def restart(self, config: str):
         config = XRayConfig(config, self.connection.peer)
         self.core.restart(config)
+        self.activity.reset()
 
     @rpyc.exposed
     def fetch_xray_version(self):
@@ -137,7 +161,15 @@ class XrayService(rpyc.Service):
 
     @rpyc.exposed
     def fetch_health(self):
-        return snapshot()
+        return {**snapshot(), **self.activity.snapshot(), **self.device_policies.metadata()}
+
+    @rpyc.exposed
+    def fetch_device_activity(self):
+        return self.activity.snapshot()
+
+    @rpyc.exposed
+    def set_device_policies(self, policies):
+        return self.device_policies.replace(policies)
 
     @rpyc.exposed
     def fetch_logs(self, callback: callable) -> XrayCoreLogsHandler:

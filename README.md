@@ -1,6 +1,6 @@
 # Marzban-node
 
-> **Mr.shaw community fork:** This repository preserves the upstream Marzban-Node project and adds node health reporting plus one managed HTTP/SOCKS outbound per Node. Read [Fork features](FORK_FEATURES.md), the [Changelog](CHANGELOG.md), and [`RELEASE_CHECKLIST.md`](RELEASE_CHECKLIST.md). Device limiting is planned for a later release.
+> **Mr.shaw community fork:** This repository preserves the upstream Marzban-Node project and adds node health reporting plus one managed HTTP/SOCKS outbound per Node. Read [Fork features](FORK_FEATURES.md), the [Changelog](CHANGELOG.md), and [`RELEASE_CHECKLIST.md`](RELEASE_CHECKLIST.md). Local development adds online-user queries and device-policy acknowledgement; [the contract and limitations](docs/activity-and-policy.md) distinguish subscription registration from direct connection enforcement. These changes are unpublished; direct connections are not yet device-limited.
 
 Every Node code, protocol, Xray-core, configuration, UI-facing contract, or documentation change must be registered with the paired `kissow/Marzban` and `kissow/Marzban-scripts` records. The Node is not considered released until the protocol notes, paired commit, tests, Actions result, GHCR digest, and server acceptance status are recorded. If a change does not affect the Node channel, explicitly record that the channel, certificates, ports, and data are unchanged.
 

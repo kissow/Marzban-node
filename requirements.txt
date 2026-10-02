@@ -4,6 +4,7 @@ cffi==1.17.1
 click==8.1.7
 cryptography==43.0.1
 fastapi==0.115.2
+grpcio==1.67.1
 h11==0.14.0
 idna==3.7
 plumbum==1.8.1

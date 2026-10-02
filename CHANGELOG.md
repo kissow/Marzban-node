@@ -1,5 +1,20 @@
 # Mr.shaw Marzban-Node Fork 更新记录
 
+## 2026-10-02 设备账号加载链（本地开发，未发布）
+
+- 配对主面板通过现有认证 Xray 控制通道下发每个 HWID 的独立账号；Node 配置加载这些账号，支持 `reject_new` 用户的新连接凭据拒绝。
+- Node 不保存原始 HWID，也不把策略快照或在线用户数误报为物理设备数；没有 `X-HWID` 的旧客户端由主面板返回 `428`。
+- 现有证书、服务端口、API 端口、数据目录和固定 Xray `v26.3.27` 保持不变；真实 Linux Node 与客户端矩阵尚未验收，未发布镜像。
+
+## 2026-10-02 活动查询与策略接收（本地开发，未发布）
+
+- 固定 Xray v26.3.27 的 `GetAllOnlineUsers` 经现有 TLS API 查询；policy 启用 `statsUserOnline` 并保留已有字段。只有未实现 RPC 的旧核心回退到观察到的近期流量；失败显示未知。读取始终 reset=false，不清零主面板计费数据。
+- 新增认证 REST `/device-activity`、`/device-policies` 和 RPyC 配对方法。共用原子校验，完整快照替换、重复用户拒绝、数量/revision/UTC 时间确认；不发送 HWID、IP 或用户代理凭据。
+- 健康资源缓存和活动/策略元数据分别合成，避免缓存掩盖刚完成的同步。核心重启清除活动基线，认证会话更新清除旧策略。
+- `device-policy-v1`、`xray-user-stats-v1` 表示合同支持；`policy_enforcement=subscription_request_and_node_credentials`、`direct_connection_enforced=true` 表示当前版本已经把已登记设备凭据加载到 Node 的 Xray 配置中。策略 ACK 本身仍不是实时在线设备数证明；旧版本的“仅订阅请求”描述已由本轮实现取代。
+- 本地真实 Xray 验证 VLESS 连接/断开、TLS Stats RPC、非重置流量读取，以及 HTTP/SOCKS 配置；CI 增加固定核心实测步骤，尚未执行线上构建。
+- 接口、旧节点兼容、升级和回退见 [合同](docs/activity-and-policy.md)。证书、服务端口、API 端口、数据库、数据目录、核心版本与安装脚本保持原样。
+
 本文件仅记录本 Fork 相对 [Gozargah/Marzban-node](https://github.com/Gozargah/Marzban-node) 的改动。原作者、许可证和上游 Git 历史均保留；完整功能边界见 [FORK_FEATURES.md](FORK_FEATURES.md)。
 
 ## 正式版核心一致性闸门（2026-09-30，未发布）
@@ -20,7 +35,7 @@
 - 支持主面板下发的单条 HTTP 或 SOCKS5 住宅代理出口；每个 Node 最多一条。
 - 具体路由规则优先于默认住宅出口；HTTP 出口只承接 TCP，UDP 保持原路由。
 - Xray 重启前先验证新配置；验证失败时不先停止正在运行的核心。日志不输出住宅代理密码。
-- 设备数量限制尚未实现，待用户级方案确定后单独开发。
+- （历史阶段记录）直接连接设备数量限制尚未实现；当时本地开发版只有用户策略元数据接收，订阅 HWID 限制由配对主面板执行。该阶段已被上方“设备账号加载链”取代，不代表当前实现。
 
 发布时须记录与 `kissow/Marzban` 的配对版本，并完成真实 Linux 节点联调。
 

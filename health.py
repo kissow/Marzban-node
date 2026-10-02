@@ -107,14 +107,19 @@ def snapshot():
         _cached_snapshot = {
             "sampled_at": datetime.now(timezone.utc).isoformat(),
             "source": "node-runtime",
-            "capabilities": ["managed-outbounds-v1"],
+            "capabilities": [
+                "managed-outbounds-v1",
+                "device-policy-v1",
+                "xray-user-stats-v1",
+            ],
             "cpu_percent": _cpu_percent(),
             "memory_total_bytes": memory_total,
             "memory_used_bytes": memory_used,
             "disk_total_bytes": disk_total,
             "disk_used_bytes": disk_used,
             "uptime_seconds": uptime,
-            # The stock Xray API has no reliable per-node online-user count.
+            # Live activity and policy metadata are merged by the service,
+            # outside this resource cache, to avoid stale sync acknowledgements.
             "active_users": None,
             "disk_path": "/",
             "cpu_scope": "node-os",

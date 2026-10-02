@@ -56,6 +56,15 @@ class XRayConfig(dict):
             "tag": "API"
         }
         self["stats"] = {}
+        # The fixed core supports GetAllOnlineUsers. Enable the corresponding
+        # policy per configured level while retaining every existing setting.
+        levels = self.setdefault("policy", {}).setdefault("levels", {})
+        levels.setdefault("0", {})
+        for configured_inbound in self.get("inbounds", []):
+            for client in configured_inbound.get("settings", {}).get("clients", []):
+                levels.setdefault(str(client.get("level", 0)), {})
+        for level in levels.values():
+            level["statsUserOnline"] = True
         inbound = {
             "listen": self.api_host,
             "port": self.api_port,

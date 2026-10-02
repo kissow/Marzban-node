@@ -1,6 +1,7 @@
 import asyncio
 import json
 import time
+from typing import Any, Dict, List
 from uuid import UUID, uuid4
 
 from fastapi import (APIRouter, Body, FastAPI, HTTPException, Request,
@@ -11,8 +12,11 @@ from fastapi.responses import JSONResponse
 from starlette.websockets import WebSocketDisconnect
 
 from config import XRAY_ASSETS_PATH, XRAY_EXECUTABLE_PATH
+from device_activity import DeviceActivityTracker
+from device_policy import DevicePolicyStore
 from health import snapshot
 from logger import logger
+from xray_stats import XrayStatsClient
 from xray import XRayConfig, XRayCore
 
 app = FastAPI()
@@ -42,10 +46,18 @@ class Service(object):
         )
         self.core_version = self.core.get_version()
         self.config = None
+        self.device_policies = DevicePolicyStore()
+        self.activity = DeviceActivityTracker(
+            self._read_user_totals,
+            window_seconds=120,
+            online_reader=self._read_online_users,
+        )
 
         self.router.add_api_route("/", self.base, methods=["POST"])
         self.router.add_api_route("/ping", self.ping, methods=["POST"])
         self.router.add_api_route("/health", self.health, methods=["POST"])
+        self.router.add_api_route("/device-activity", self.device_activity, methods=["POST"])
+        self.router.add_api_route("/device-policies", self.set_device_policies, methods=["POST"])
         self.router.add_api_route("/connect", self.connect, methods=["POST"])
         self.router.add_api_route("/disconnect", self.disconnect, methods=["POST"])
         self.router.add_api_route("/start", self.start, methods=["POST"])
@@ -55,7 +67,7 @@ class Service(object):
         self.router.add_websocket_route("/logs", self.logs)
 
     def match_session_id(self, session_id: UUID):
-        if session_id != self.session_id:
+        if not self.connected or self.session_id is None or session_id != self.session_id:
             raise HTTPException(
                 status_code=403,
                 detail="Session ID mismatch."
@@ -87,6 +99,8 @@ class Service(object):
                     pass
 
         self.connected = True
+        self.device_policies = DevicePolicyStore()
+        self.activity.reset()
         logger.info(f'{self.client_ip} connected, Session ID = "{self.session_id}".')
 
         return self.response(
@@ -100,6 +114,8 @@ class Service(object):
         self.session_id = None
         self.client_ip = None
         self.connected = False
+        self.device_policies = DevicePolicyStore()
+        self.activity.reset()
 
         if self.core.started:
             try:
@@ -115,7 +131,32 @@ class Service(object):
 
     def health(self, session_id: UUID = Body(embed=True)):
         self.match_session_id(session_id)
-        return snapshot()
+        return {**snapshot(), **self.activity.snapshot(), **self.device_policies.metadata()}
+
+    def _read_online_users(self):
+        if not self.core.started:
+            raise RuntimeError("Xray is not started")
+        return XrayStatsClient().online_users()
+
+    def _read_user_totals(self):
+        if not self.core.started:
+            raise RuntimeError("Xray is not started")
+        return XrayStatsClient().user_totals()
+
+    def device_activity(self, session_id: UUID = Body(embed=True)):
+        self.match_session_id(session_id)
+        return self.activity.snapshot()
+
+    def set_device_policies(
+        self,
+        session_id: UUID = Body(embed=True),
+        policies: List[Dict[str, Any]] = Body(embed=True),
+    ):
+        self.match_session_id(session_id)
+        try:
+            return self.device_policies.replace(policies)
+        except ValueError as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from exc
 
     def start(self, session_id: UUID = Body(embed=True), config: str = Body(embed=True)):
         self.match_session_id(session_id)
@@ -159,6 +200,7 @@ class Service(object):
                 detail=last_log
             )
 
+        self.activity.reset()
         return self.response()
 
     def stop(self, session_id: UUID = Body(embed=True)):
@@ -170,6 +212,7 @@ class Service(object):
         except RuntimeError:
             pass
 
+        self.activity.reset()
         return self.response()
 
     def restart(self, session_id: UUID = Body(embed=True), config: str = Body(embed=True)):
@@ -214,6 +257,7 @@ class Service(object):
                 detail=last_log
             )
 
+        self.activity.reset()
         return self.response()
 
     async def logs(self, websocket: WebSocket):
