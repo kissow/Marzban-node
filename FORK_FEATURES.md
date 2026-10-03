@@ -1,8 +1,10 @@
 # Marzban-Node 开源扩展功能
 
-## MR-20261003-EGRESS-UDP（本地未发布）
+## MR-20261003-EGRESS-UDP（镜像已发布，服务器验收待完成）
 
 新增能力 `managed-outbounds-udp-v1` 和 per-Node `udp_mode`：legacy 保持原样，proxy 使用 SOCKS TCP/UDP，tcp_only 将默认 UDP DNS 经住宅代理改走 TCP、阻断其他默认 UDP。保留已有显式路由优先级，不添加直连降级；不能保证全部应用回退 TCP。主面板与 Node 均有运行时代码变化，需要发布后配对更新，scripts/核心/证书/端口/数据卷无变化。48 项本地测试通过，实际手机与供应商、Linux 配对验收待完成。详见 [线协议和限制](docs/egress-udp.md)。下方历史 Node 无变化说明不适用于本功能。
+
+发布证据（配对源 SHA、Actions、两镜像 index/架构 digest/OCI revision、scripts 文档提交）见 [egress-udp-release.md](docs/egress-udp-release.md)。服务器未验收，不是稳定版。
 
 ## 2026-10-03 主面板订阅兼容配对（Node 运行时无变化）
 

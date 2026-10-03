@@ -1,6 +1,6 @@
 # Managed outbound UDP contract
 
-Change: `MR-20261003-EGRESS-UDP` (2026-10-03), Mr.shaw. Local/unpublished; no new image or server acceptance is claimed. Pair with the panel change of the same ID. Scripts are unchanged; pinned Xray remains `v26.3.27`.
+Change: `MR-20261003-EGRESS-UDP` (2026-10-03), Mr.shaw. Paired code and latest images are published, with Actions/digests/OCI revisions verified in [release evidence](egress-udp-release.md). Server/provider/mobile/UI screenshot acceptance remains pending; not a stable-release claim. Pair with the panel change of the same ID. Scripts runtime is unchanged; pinned Xray remains `v26.3.27`.
 
 ## Wire format
 
@@ -39,7 +39,7 @@ The extension is validated and applied on a deep copy, committed only on success
 
 Panel GET/PUT egress expose `udp_mode`, default legacy. Nonlegacy requires both capability flags and is checked before saving and again on connect/restart. Missing capability/old/offline Node returns panel 409; invalid input 422. Legacy remains compatible with old managed-outbound Nodes. A downgraded Node cannot silently ignore saved nonlegacy settings.
 
-After paired images are actually published and approved: update Node first, check connection, then update panel and enable a mode on a test Node. Back up Compose, certificates/config and data directories. Keep existing service/API ports, volumes and credentials; do not reinstall or delete volumes. Restore legacy before downgrading either side. Panel migration only adds `node_egress.udp_mode`; Node has no migration.
+Paired images are now published with verified source revisions: update Node first, check connection, then update panel and enable a mode on a test Node. Back up Compose, certificates/config and data directories. Existing switched Fork installations use update without repeated adopt. Keep existing service/API ports, volumes and credentials; do not reinstall or delete volumes. Restore legacy before downgrading either side. Panel migration only adds `node_egress.udp_mode`; Node has no migration.
 
 ## Evidence and acceptance
 

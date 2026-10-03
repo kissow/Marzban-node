@@ -1,15 +1,17 @@
 # Marzban-Node 发布清单
 
-## MR-20261003-EGRESS-UDP（本地，未发布）
+## MR-20261003-EGRESS-UDP（镜像已发布，服务器验收待完成）
 
 - [x] 能力 `managed-outbounds-udp-v1`、legacy/proxy/tcp_only 线协议、显式路由优先级与 DNS 上游替换边界已登记。
 - [x] 原子配置应用、非法模式/HTTP+proxy/标签冲突、旧配置兼容有回归测试。
 - [x] 48 项完整测试通过无跳过；固定 Xray v26.3.27，8 组配置解析、4 项 A/TXT 经模拟 HTTP/SOCKS TCP 供应商运行测试。
-- [x] README/FORK_FEATURES/CHANGELOG/[协议](docs/egress-udp.md) 和配对主面板、05/08/09 已更新；scripts 无变化。
+- [x] README/FORK_FEATURES/CHANGELOG/[协议](docs/egress-udp.md) 和配对主面板、05/08/09 已更新；scripts 运行时无变化，配对文档已更新并通过 Actions 检查。
 - [ ] 隔离 Linux 认证通道与实际供应商 TCP53、v2rayNG/Clash Meta、其他 UDP 应用和 legacy 回退验收。
-- [ ] 配对推送、Actions、镜像 index/架构 digest/OCI revision、服务器验收证据。
+- [x] 配对推送、Actions 成功、镜像 index/架构 digest/OCI revision 已登记。服务器验收仍待完成。
 
 本功能有 Node 运行时代码变化，需要发布后更新 Node；下方“Node 不需更新”仅属于旧 HWID 兼容补丁。未改证书、端口、数据卷或核心版本；不要重装或删除数据。其他 UDP 的阻断为路由单元覆盖，非真实应用全量保证。
+
+发布证据（配对源 SHA、Actions、两镜像 index/架构 digest/OCI revision、scripts 文档提交）见 [egress-udp-release.md](docs/egress-udp-release.md)。服务器未验收，不是稳定版。
 
 ## MR-20261003-HWID-COMPAT 配对发布（镜像已发布，服务器验收待完成）
 
