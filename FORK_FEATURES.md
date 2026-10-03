@@ -4,7 +4,7 @@
 
 主面板在 `reject_new` 下对不带 `X-HWID` 的普通客户端恢复原共享订阅；Node 仍从原有认证控制通道加载主面板配置中的共享账号和已登记 HWID 独立账号。Node 不接收原始 HWID、不独立登记设备、不新增端口/数据库/证书/核心版本，本次不需更新 Node。带 HWID 的超额拒绝由主面板执行；无 HWID/共享配置可绕过 HWID 限额，因此不是物理设备或实时在线设备限制。真实 Node 验收需随主面板重新执行。
 
-配对镜像已发布：主面板 `44397842bab52acbd49672a6812958b9fea17f28` / Actions `37087589319` / GHCR `sha256:a0818c18627358f2b8e7eaf3e33e20056625acaa0a663fe578c6446cb4bfb51f`；Node `91fbf0484127b1fe3fc34b34c49d862ad6a2c320` / Actions `37087589432` / GHCR `sha256:ab72518f962f44f2f6594f14f9cbf95332125acb4079a94b71423fdb02b129d7`。服务器验收待完成。
+配对镜像已发布：主面板源 `37bab0b113c44ccb2a9db6230ac982b7d2a889a1` / Actions `37090609233` / GHCR `sha256:c4bbe88b5b547bbdca3d6b8a4bf1e7c92aeb29ae50b36cd758b7c6eccae2edfc`；Node 源 `c135743d1ad26d45538e4c6c7a65a9c6693856a8` / Actions `37090612247` / GHCR `sha256:21340918298f0b8647fb7eb360294334891fc219e280a75af5d133c66ee9fbc1`。服务器验收待完成。
 
 ## 2026-10-02 发布状态
 

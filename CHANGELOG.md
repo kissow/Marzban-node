@@ -6,7 +6,7 @@
 - Node 不保存原始 HWID、不自行判断订阅是否带 HWID，也不新增端口、数据库、证书或 Xray 核心版本；本次不需要更新 Node 镜像。
 - 带 HWID 的新设备超额拒绝由主面板订阅登记执行，Node 只加载主面板下发的最终账号配置。无 HWID 客户端使用共享凭据，不能获得 HWID 限额保证；策略 ACK 不是所有客户端被拦截的证明。
 - 主面板本轮服务器验收需重新完成；本条不能把此前 Node 镜像发布证据当作本轮验收通过。
-- 配对发布证据：主面板 commit `44397842bab52acbd49672a6812958b9fea17f28` / Actions `37087589319` / GHCR `latest` index `sha256:a0818c18627358f2b8e7eaf3e33e20056625acaa0a663fe578c6446cb4bfb51f`；Node commit `91fbf0484127b1fe3fc34b34c49d862ad6a2c320` / Actions `37087589432` / GHCR `latest` index `sha256:ab72518f962f44f2f6594f14f9cbf95332125acb4079a94b71423fdb02b129d7`。Node 本轮无需更新服务器。
+- 配对发布证据：主面板源 commit `37bab0b113c44ccb2a9db6230ac982b7d2a889a1` / Actions `37090609233` / GHCR `latest` index `sha256:c4bbe88b5b547bbdca3d6b8a4bf1e7c92aeb29ae50b36cd758b7c6eccae2edfc`；Node 源 commit `c135743d1ad26d45538e4c6c7a65a9c6693856a8` / Actions `37090612247` / GHCR `latest` index `sha256:21340918298f0b8647fb7eb360294334891fc219e280a75af5d133c66ee9fbc1`。Node 本轮无需更新服务器。
 
 ## 2026-10-02 设备账号加载链（镜像已发布，服务器验收待完成）
 
