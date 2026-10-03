@@ -1,5 +1,12 @@
 # Marzban-Node 发布清单
 
+## MR-20261003-HWID-COMPAT 配对发布（镜像已发布，服务器验收待完成）
+
+- [x] 配对主面板修复无 HWID 普通客户端在 `reject_new` 下返回 `428` 的回归；Node 运行时无需修改，继续接收共享账号与已登记 HWID 独立账号。
+- [x] Node commit `91fbf0484127b1fe3fc34b34c49d862ad6a2c320` 已推送；Actions `37087589432` 成功；GHCR `latest` index `sha256:ab72518f962f44f2f6594f14f9cbf95332125acb4079a94b71423fdb02b129d7` 已发布。
+- [x] 配对主面板 commit `44397842bab52acbd49672a6812958b9fea17f28`、Actions `37087589319` 和 GHCR `latest` index `sha256:a0818c18627358f2b8e7eaf3e33e20056625acaa0a663fe578c6446cb4bfb51f` 已记录；正式 Xray 仍为 `v26.3.27`。
+- [ ] 服务器尚未更新；待主面板服务器完成普通订阅、HWID 登记/重复/超额和真实 Node 连接验收。
+
 ## MR-20261002-01 镜像发布核对（服务器验收待完成）
 
 - [x] 本地 Python 3.12 完整 39 项测试通过，设置 `XRAY_TEST_BINARY` 后无跳过项。
