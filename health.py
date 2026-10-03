@@ -109,6 +109,7 @@ def snapshot():
             "source": "node-runtime",
             "capabilities": [
                 "managed-outbounds-v1",
+                "managed-outbounds-udp-v1",
                 "device-policy-v1",
                 "xray-user-stats-v1",
             ],

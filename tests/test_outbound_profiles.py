@@ -1,4 +1,5 @@
 import json
+from copy import deepcopy
 import os
 import subprocess
 import unittest
@@ -7,6 +8,63 @@ from outbound_profiles import OutboundConfigError, apply_managed_outbounds
 
 
 class ManagedOutboundTests(unittest.TestCase):
+    def udp_config(self, mode="tcp_only", protocol="socks"):
+        return {"outbounds": [{"tag": "direct", "protocol": "freedom"}],
+                "dns": {"hosts": {"example.test": "192.0.2.1"}},
+                "routing": {"rules": [{"type": "field", "inboundTag": ["api"], "outboundTag": "api"},
+                                      {"type": "field", "outboundTag": "direct"}]},
+                "marzban_node_extensions": {"outbounds": [{"tag": "residential", "protocol": protocol,
+                    "server": "127.0.0.1", "port": 1080, "udp_mode": mode}], "default_outbound_tag": "residential"}}
+
+    def test_tcp_only_dns_tunnels_and_other_udp_blocks(self):
+        config = self.udp_config()
+        apply_managed_outbounds(config)
+        outbounds = {item["tag"]: item for item in config["outbounds"]}
+        self.assertEqual(outbounds["managed-residential-dns"]["settings"]["network"], "tcp")
+        self.assertEqual(outbounds["managed-residential-dns"]["proxySettings"], {"tag": "residential"})
+        self.assertEqual(config["dns"]["servers"], ["tcp://1.1.1.1", "tcp://8.8.8.8"])
+        self.assertEqual(config["dns"]["hosts"], {"example.test": "192.0.2.1"})
+        rules = config["routing"]["rules"]
+        self.assertEqual(rules[0]["inboundTag"], ["managed-residential-dns-query"])
+        self.assertEqual(rules[1]["inboundTag"], ["api"])
+        self.assertEqual(rules[2]["port"], "53")
+        self.assertEqual(rules[3]["outboundTag"], "managed-residential-udp-block")
+        self.assertEqual(rules[4]["network"], "tcp")
+        self.assertEqual(rules[5]["outboundTag"], "direct")
+
+    def test_proxy_mode_keeps_full_udp_without_dns_rewrite(self):
+        config = self.udp_config("proxy")
+        apply_managed_outbounds(config)
+        self.assertEqual(config["routing"]["rules"][1]["network"], "tcp,udp")
+        self.assertEqual(config["dns"], {"hosts": {"example.test": "192.0.2.1"}})
+        self.assertEqual(len(config["outbounds"]), 2)
+
+    def test_compatibility_tags_and_invalid_modes_rejected(self):
+        for mode, protocol in (("invalid", "socks"), ("proxy", "http"), ([], "socks"), ({}, "socks")):
+            with self.assertRaises(OutboundConfigError):
+                apply_managed_outbounds(self.udp_config(mode, protocol))
+        for tag in ("managed-residential-dns", "managed-residential-dns-query", "managed-residential-udp-block"):
+            config = self.udp_config()
+            config["outbounds"].append({"tag": tag, "protocol": "freedom"})
+            with self.assertRaisesRegex(OutboundConfigError, "reserved"):
+                apply_managed_outbounds(config)
+
+    def test_invalid_policy_does_not_partially_mutate_config(self):
+        config = self.udp_config()
+        config["outbounds"].append({"tag": "managed-residential-dns", "protocol": "freedom"})
+        original = deepcopy(config)
+        with self.assertRaises(OutboundConfigError):
+            apply_managed_outbounds(config)
+        self.assertEqual(config, original)
+
+    def test_tcp_only_preserves_explicit_route_priority(self):
+        config = self.udp_config()
+        config["routing"]["rules"].insert(1, {"type": "field", "ip": ["192.0.2.0/24"], "outboundTag": "direct"})
+        apply_managed_outbounds(config)
+        rules = config["routing"]["rules"]
+        self.assertEqual(rules[2]["ip"], ["192.0.2.0/24"])
+        self.assertEqual(rules[3]["outboundTag"], "managed-residential-dns")
+
     def test_http_without_credentials(self):
         config = {"outbounds": [], "marzban_node_extensions": {"outbounds": [
             {"tag": "residential", "protocol": "http", "server": "proxy.example.net", "port": 8080}
@@ -116,10 +174,10 @@ class ManagedOutboundTests(unittest.TestCase):
 class XRayConfigValidationTests(unittest.TestCase):
     def test_http_and_socks_configs_pass_real_xray_parser(self):
         for protocol in ("http", "socks"):
-            for authenticated in (False, True):
-                with self.subTest(protocol=protocol, authenticated=authenticated):
+            for mode, authenticated in (("legacy", False), ("legacy", True), ("tcp_only", False), ("tcp_only", True)):
+                with self.subTest(protocol=protocol, mode=mode, authenticated=authenticated):
                     profile = {"tag": "residential", "protocol": protocol,
-                               "server": "proxy.example.net", "port": 8080}
+                               "server": "proxy.example.net", "port": 8080, "udp_mode": mode}
                     if authenticated:
                         profile.update({"username": "alice", "password": "secret"})
                     config = {

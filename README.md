@@ -1,5 +1,7 @@
 # Marzban-node
 
+> **Local development (2026-10-03, MR-20261003-EGRESS-UDP):** Per-Node UDP compatibility is local/unpublished, not included in the historical release evidence below. Requires a paired panel update; scripts, certificates, ports, volumes and pinned Xray v26.3.27 are unchanged. Legacy remains default. TCP-only DNS is not arbitrary UDP-to-TCP conversion. [Wire contract and acceptance](docs/egress-udp.md).
+
 > **Release status (2026-10-03):** `master` source commit `c135743d1ad26d45538e4c6c7a65a9c6693856a8` is pushed and Actions run `37090612247` succeeded. `ghcr.io/kissow/marzban-node:latest` is published with index digest `sha256:21340918298f0b8647fb7eb360294334891fc219e280a75af5d133c66ee9fbc1`. The Node runtime is unchanged in this paired release; server update and acceptance are still pending; use the paired Marzban release record for compatibility.
 
 > **Mr.shaw community fork:** This repository preserves the upstream Marzban-Node project and adds node health reporting plus one managed HTTP/SOCKS outbound per Node. Read [Fork features](FORK_FEATURES.md), the [Changelog](CHANGELOG.md), and [`RELEASE_CHECKLIST.md`](RELEASE_CHECKLIST.md). The current image includes online-user queries and device-policy acknowledgement/credential loading; [the contract and limitations](docs/activity-and-policy.md) distinguish subscription registration from direct connection enforcement. The image is published and awaiting server acceptance.

@@ -1,5 +1,9 @@
 # Marzban-Node 开源扩展功能
 
+## MR-20261003-EGRESS-UDP（本地未发布）
+
+新增能力 `managed-outbounds-udp-v1` 和 per-Node `udp_mode`：legacy 保持原样，proxy 使用 SOCKS TCP/UDP，tcp_only 将默认 UDP DNS 经住宅代理改走 TCP、阻断其他默认 UDP。保留已有显式路由优先级，不添加直连降级；不能保证全部应用回退 TCP。主面板与 Node 均有运行时代码变化，需要发布后配对更新，scripts/核心/证书/端口/数据卷无变化。48 项本地测试通过，实际手机与供应商、Linux 配对验收待完成。详见 [线协议和限制](docs/egress-udp.md)。下方历史 Node 无变化说明不适用于本功能。
+
 ## 2026-10-03 主面板订阅兼容配对（Node 运行时无变化）
 
 主面板在 `reject_new` 下对不带 `X-HWID` 的普通客户端恢复原共享订阅；Node 仍从原有认证控制通道加载主面板配置中的共享账号和已登记 HWID 独立账号。Node 不接收原始 HWID、不独立登记设备、不新增端口/数据库/证书/核心版本，本次不需更新 Node。带 HWID 的超额拒绝由主面板执行；无 HWID/共享配置可绕过 HWID 限额，因此不是物理设备或实时在线设备限制。真实 Node 验收需随主面板重新执行。

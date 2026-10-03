@@ -1,5 +1,13 @@
 # Mr.shaw Marzban-Node Fork 更新记录
 
+## MR-20261003-EGRESS-UDP：住宅代理 UDP 兼容（本地，未发布）
+
+- 通过原认证配置通道接受 per-Node `udp_mode`，新增 `managed-outbounds-udp-v1`；默认 legacy 不改变旧行为。
+- `proxy` 保留 SOCKS TCP/UDP；`tcp_only` 将默认 UDP53 DNS 交给 TCP 住宅隧道、阻断其他默认 UDP，保留原显式路由优先级。不会将所有 UDP 转 TCP，不新增直连回退。
+- 配置在深拷贝中验证后原子提交，错误模式/标签冲突不写入半套配置。TCP-only 替换该 Node 的 DNS 上游列表，供应商需允许 TCP53。
+- 48 项完整本地测试通过：8 组真实固定核心配置解析、4 项 DNS TCP 运行测试；Linux/实际供应商/手机应用验收待完成。未推送或发布新镜像。
+- 需要配对主面板更新；scripts、证书、端口、数据卷、固定核心 v26.3.27 无变化。完整线协议见 [egress-udp.md](docs/egress-udp.md)。下方历史“Node 不需更新”仅适用于 HWID 兼容修复，不适用于本功能。
+
 ## 2026-10-03 主面板订阅兼容修复配对说明（镜像已发布，服务器验收待完成；Node 运行时无变化）
 
 - 主面板修复 `reject_new` 对无 `X-HWID` 客户端返回 `428` 的回归，并恢复共享账号；Node 继续通过原有认证 Xray 控制通道接收共享账号和已登记 HWID 的独立账号。
