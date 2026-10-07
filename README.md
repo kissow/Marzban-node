@@ -1,5 +1,12 @@
 # Marzban-node
 
+## MR-20261008-NODE-RELAY-SOURCES（本地开发，未发布）
+
+新增源Node到目标Node透明TCP转发，主控经原认证通道统一下发；managed-node-relay-v1能力、REST /relays/status与/relays、RPyC JSON字符串快照与精确ACK、会话清理、原子应用/监听检查/失败恢复。复用Mr.shaw本Fork主控纯模块，无3X-UI源码复制；感谢上游作者，保留许可。新增psutil==5.9.4，核心仍v26.3.27，无额外软件或监控端口。
+
+证书、原控制/API端口、数据卷和目标认证/住宅出口不改。每源最多512个固定目标；单跳来源选择，不自动串联多跳。配对主控新增来源API/迁移/原组件管理弹窗，需配对镜像并先更新来源Node。scripts仅配对文档。未推送/CI/镜像发布/服务器验收；不能把旧镜像当成本轮代码。[完整线协议与更新边界](docs/node-relay.md)。
+
+
 > **Current release (2026-10-03, MR-20261003-EGRESS-UDP):** Paired panel/Node code and multiarchitecture latest images are published and OCI revisions verified. [Source SHAs, successful Actions and exact image digests](docs/egress-udp-release.md). Server/provider/mobile/UI screenshot acceptance remains pending; this is not a stable-release claim. Update Node first, then panel. Scripts runtime, certificates, ports, volumes and pinned Xray v26.3.27 are unchanged. Legacy remains default. TCP-only DNS is not arbitrary UDP-to-TCP conversion. [Wire contract and acceptance](docs/egress-udp.md).
 
 > **Historical release (2026-10-03, HWID compatibility):** Source commit `c135743d1ad26d45538e4c6c7a65a9c6693856a8`, Actions `37090612247`, image index `sha256:21340918298f0b8647fb7eb360294334891fc219e280a75af5d133c66ee9fbc1`. Its runtime-unchanged note does not apply to the current UDP feature, which requires Node update. This historical digest is not current latest.

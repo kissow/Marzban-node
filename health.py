@@ -110,6 +110,7 @@ def snapshot():
             "capabilities": [
                 "managed-outbounds-v1",
                 "managed-outbounds-udp-v1",
+                "managed-node-relay-v1",
                 "device-policy-v1",
                 "xray-user-stats-v1",
             ],

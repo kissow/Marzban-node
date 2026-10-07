@@ -1,5 +1,14 @@
 # Marzban-Node 发布清单
 
+## MR-20261008-NODE-RELAY-SOURCES（本地开发，未发布）
+
+本轮最终本地证据：主控164/164与Node60/60各连续两轮，含真实固定Xray实测、REST ASGI与本地RPyC序列化，无跳过；前端47/47、TypeScript/Vite、pip check、语法编译及三仓库diff检查通过。实际原组件UI截图被浏览器安全策略阻断，LinuxCI/双架构镜像/真实服务器联调尚未执行，不标稳定版。
+
+新增源Node到目标Node透明TCP转发，主控经原认证通道统一下发；managed-node-relay-v1能力、REST /relays/status与/relays、RPyC JSON字符串快照与精确ACK、会话清理、原子应用/监听检查/失败恢复。复用Mr.shaw本Fork主控纯模块，无3X-UI源码复制；感谢上游作者，保留许可。新增psutil==5.9.4，核心仍v26.3.27，无额外软件或监控端口。
+
+证书、原控制/API端口、数据卷和目标认证/住宅出口不改。每源最多512个固定目标；单跳来源选择，不自动串联多跳。配对主控新增来源API/迁移/原组件管理弹窗，需配对镜像并先更新来源Node。scripts仅配对文档。未推送/CI/镜像发布/服务器验收；不能把旧镜像当成本轮代码。[完整线协议与更新边界](docs/node-relay.md)。
+
+
 ## MR-20261003-EGRESS-UDP（镜像已发布，服务器验收待完成）
 
 - [x] 能力 `managed-outbounds-udp-v1`、legacy/proxy/tcp_only 线协议、显式路由优先级与 DNS 上游替换边界已登记。
