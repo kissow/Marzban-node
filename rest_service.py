@@ -15,6 +15,7 @@ from config import XRAY_ASSETS_PATH, XRAY_EXECUTABLE_PATH
 from device_activity import DeviceActivityTracker
 from device_policy import DevicePolicyStore
 from health import snapshot
+from relay_manager import RelayManager
 from logger import logger
 from xray_stats import XrayStatsClient
 from xray import XRayConfig, XRayCore
@@ -47,6 +48,7 @@ class Service(object):
         self.core_version = self.core.get_version()
         self.config = None
         self.device_policies = DevicePolicyStore()
+        self.relays = RelayManager()
         self.activity = DeviceActivityTracker(
             self._read_user_totals,
             window_seconds=120,
@@ -58,6 +60,8 @@ class Service(object):
         self.router.add_api_route("/health", self.health, methods=["POST"])
         self.router.add_api_route("/device-activity", self.device_activity, methods=["POST"])
         self.router.add_api_route("/device-policies", self.set_device_policies, methods=["POST"])
+        self.router.add_api_route("/relays", self.set_relays, methods=["POST"])
+        self.router.add_api_route("/relays/status", self.relay_status, methods=["POST"])
         self.router.add_api_route("/connect", self.connect, methods=["POST"])
         self.router.add_api_route("/disconnect", self.disconnect, methods=["POST"])
         self.router.add_api_route("/start", self.start, methods=["POST"])
@@ -86,6 +90,7 @@ class Service(object):
         return self.response()
 
     def connect(self, request: Request):
+        self.relays.stop()
         self.session_id = uuid4()
         self.client_ip = request.client.host
 
@@ -108,6 +113,7 @@ class Service(object):
         )
 
     def disconnect(self):
+        self.relays.stop()
         if self.connected:
             logger.info(f'{self.client_ip} disconnected, Session ID = "{self.session_id}".')
 
@@ -131,7 +137,22 @@ class Service(object):
 
     def health(self, session_id: UUID = Body(embed=True)):
         self.match_session_id(session_id)
-        return {**snapshot(), **self.activity.snapshot(), **self.device_policies.metadata()}
+        return {**snapshot(), **self.activity.snapshot(), **self.device_policies.metadata(), "node_relay": self.relays.state()}
+
+    def relay_status(self, session_id: UUID = Body(embed=True)):
+        self.match_session_id(session_id)
+        return {**self.relays.status(), "core_started": bool(self.core.started)}
+
+    def set_relays(self, session_id: UUID = Body(embed=True), profiles: List[Dict[str, Any]] = Body(embed=True)):
+        self.match_session_id(session_id)
+        if profiles and not self.core.started:
+            raise HTTPException(status_code=409, detail="Source Node core is not started")
+        try:
+            return self.relays.replace(profiles)
+        except ValueError as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from exc
+        except RuntimeError as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from exc
 
     def _read_online_users(self):
         if not self.core.started:
@@ -205,6 +226,7 @@ class Service(object):
 
     def stop(self, session_id: UUID = Body(embed=True)):
         self.match_session_id(session_id)
+        self.relays.stop()
 
         try:
             self.core.stop()

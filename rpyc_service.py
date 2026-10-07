@@ -1,4 +1,5 @@
 import time
+import json
 from socket import socket
 from threading import Thread
 
@@ -8,6 +9,7 @@ from config import XRAY_ASSETS_PATH, XRAY_EXECUTABLE_PATH
 from device_activity import DeviceActivityTracker
 from device_policy import DevicePolicyStore
 from health import snapshot
+from relay_manager import RelayManager
 from logger import logger
 from xray import XRayConfig, XRayCore
 
@@ -49,6 +51,7 @@ class XrayService(rpyc.Service):
         self.core = None
         self.connection = None
         self.device_policies = DevicePolicyStore()
+        self.relays = RelayManager()
         self.activity = DeviceActivityTracker(self._read_user_totals, window_seconds=120,
                                               online_reader=self._read_online_users)
 
@@ -78,6 +81,7 @@ class XrayService(rpyc.Service):
                         f'Previous connection from {self.connection.peer} has lost')
 
         peer, _ = socket.getpeername(conn._channel.stream.sock)
+        self.relays.stop()
         self.connection = conn
         self.device_policies = DevicePolicyStore()
         self.activity.reset()
@@ -86,6 +90,7 @@ class XrayService(rpyc.Service):
 
     def on_disconnect(self, conn):
         if conn is self.connection:
+            self.relays.stop()
             logger.warning(f'Disconnected from {self.connection.peer}')
 
             if self.core is not None:
@@ -138,6 +143,7 @@ class XrayService(rpyc.Service):
 
     @rpyc.exposed
     def stop(self):
+        self.relays.stop()
         if self.core:
             try:
                 self.core.stop()
@@ -161,7 +167,19 @@ class XrayService(rpyc.Service):
 
     @rpyc.exposed
     def fetch_health(self):
-        return {**snapshot(), **self.activity.snapshot(), **self.device_policies.metadata()}
+        return {**snapshot(), **self.activity.snapshot(), **self.device_policies.metadata(), "node_relay": self.relays.state()}
+
+    @rpyc.exposed
+    def fetch_relay_status(self):
+        return json.dumps({**self.relays.status(), "core_started": bool(self.core and self.core.started)})
+
+    @rpyc.exposed
+    def set_relays(self, profiles):
+        if self.core is None or not self.core.started:
+            # An empty JSON list is still allowed for authenticated cleanup.
+            if profiles != "[]":
+                raise RuntimeError("Source Node core is not started")
+        return json.dumps(self.relays.replace(profiles))
 
     @rpyc.exposed
     def fetch_device_activity(self):

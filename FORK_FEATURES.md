@@ -1,5 +1,12 @@
 # Marzban-Node 开源扩展功能
 
+## MR-20261008-NODE-RELAY-SOURCES（本地开发，未发布）
+
+新增源Node到目标Node透明TCP转发，主控经原认证通道统一下发；managed-node-relay-v1能力、REST /relays/status与/relays、RPyC JSON字符串快照与精确ACK、会话清理、原子应用/监听检查/失败恢复。复用Mr.shaw本Fork主控纯模块，无3X-UI源码复制；感谢上游作者，保留许可。新增psutil==5.9.4，核心仍v26.3.27，无额外软件或监控端口。
+
+证书、原控制/API端口、数据卷和目标认证/住宅出口不改。每源最多512个固定目标；单跳来源选择，不自动串联多跳。配对主控新增来源API/迁移/原组件管理弹窗，需配对镜像并先更新来源Node。scripts仅配对文档。未推送/CI/镜像发布/服务器验收；不能把旧镜像当成本轮代码。[完整线协议与更新边界](docs/node-relay.md)。
+
+
 ## MR-20261003-EGRESS-UDP（镜像已发布，服务器验收待完成）
 
 新增能力 `managed-outbounds-udp-v1` 和 per-Node `udp_mode`：legacy 保持原样，proxy 使用 SOCKS TCP/UDP，tcp_only 将默认 UDP DNS 经住宅代理改走 TCP、阻断其他默认 UDP。保留已有显式路由优先级，不添加直连降级；不能保证全部应用回退 TCP。主面板与 Node 均有运行时代码变化，需要发布后配对更新，scripts/核心/证书/端口/数据卷无变化。48 项本地测试通过，实际手机与供应商、Linux 配对验收待完成。详见 [线协议和限制](docs/egress-udp.md)。下方历史 Node 无变化说明不适用于本功能。
