@@ -1,6 +1,8 @@
+> 已配对发布；[当前镜像/SSH/验收证据](node-relay-release.md)。下文本地未发布文字为原开发阶段记录，服务器仍待验收。
+
 # Mr.shaw Node → Node 线协议
 
-MR-20261008-NODE-RELAY-SOURCES：本地开发/测试，未推送、未发布本轮镜像、未服务器验收。配对主控完整管理/API/升级合同见 [NODE_RELAY_SOURCES](https://github.com/kissow/Marzban/blob/master/docs/NODE_RELAY_SOURCES.md)；该链接在本轮上传后才公开可用，当前本地位于 ../../Marzban/docs/NODE_RELAY_SOURCES.md。
+MR-20261008-NODE-RELAY-SOURCES：代码已合并、干净Linux CI与双架构镜像已发布核对，服务器验收待完成。[配对发布证据](node-relay-release.md)；[主控管理API与升级合同](https://github.com/kissow/Marzban/blob/master/docs/NODE_RELAY_SOURCES.md)。
 
 源 Node 接受主控通过原认证 REST/RPyC 下发的固定目标快照，使用已有 Xray v26.3.27 独立进程转发 TCP，不经过源住宅出口。目标 Node 继续使用原认证、设备凭据和出口。无需额外转发软件，新增 psutil==5.9.4；不改原证书/控制/API端口、.env、数据目录或核心配置。必须放行源的业务监听 TCP端口。
 
@@ -20,6 +22,6 @@ REST还需原session_id字段；RPyC只传profiles列表的JSON字符串。每pr
 
 本地测试覆盖快照范围/认证错误/REST ASGI JSON/真实本地RPyC序列化/固定Xray多目标TLS透明转发/占用失败回滚和进程恢复。真实Linux mTLS配对、供应商网络、手机/桌面、吞吐及持续运行仍待验收，非稳定发布。CI第一轮未准备Xray的跳过项必须由第二轮显式固定Xray测试全部执行；不能将跳过当通过。
 
-最终Node完整60/60连续两轮、无跳过；配对主控164/164两轮，前端47/47、TypeScript/Vite、依赖/编译/diff通过。使用项目固定Python环境与真实v26.3.27测试二进制；不是已完成干净LinuxCI或跨服务器mTLS联调。当前尚未上传或构建新镜像。
+最终Node完整60/60连续两轮、无跳过；配对主控164/164两轮，前端47/47、TypeScript/Vite、依赖/编译/diff通过。使用项目固定Python环境与真实v26.3.27测试二进制；不是已完成干净LinuxCI或跨服务器mTLS联调。当前已上传/合并，Linux CI及新镜像发布核对完成；真实服务器配对仍待验收。
 
 感谢 Marzban、Marzban-Node 与 Xray 原作者/贡献者，保留上游许可。node_relay.py复用Mr.shaw本Fork主控纯模块，无3X-UI源码复制。
